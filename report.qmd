@@ -1,0 +1,157 @@
+---
+title: "IMPACT OF UNPLANNED DATA TRANSFORMATIONS ON ANALYSIS"
+author: "Junwei Chen"
+format: html
+editor: visual
+date: 24 February 2024
+---
+
+## Introduction
+
+In this exercise we will generate some data from the normal distribution with mean 1 and standard deviation 1. We then transform the data as outlined in the **Data Simulation** section and proceed to investigate whether the mean of the true data generating process is greater than 0. We will then discuss some of the issues brought about by the data transformations and what steps we can put in place to flag some of these issues during data analysis.
+
+All the code for for this exercise can be accessed \[here\](https://www.github.com).
+
+## Data Simulation
+
+We draw 1000 observations of data from the normal distribution of mean 1 and standard deviation 1. The last 100 observations are similar to the first 100 observations. We then change half of the negative draws to positive. Finally, we divide all observations with values between 1 and 1.1 by 10. The code that generates the observations can be accessed \[**here**\](https://www.github.com).
+
+```{r}
+#| echo: false
+
+# set the seed
+# produce first sample of 900 observations from Normal distribution of mean 1 and sd 1
+set.seed(111)
+sample_data_900 <- rnorm(900, mean=1, sd=1)
+
+# produce second sample of 100 observations from Normal distribution of mean 1 and sd 1
+# produced using same seed
+set.seed(111)
+sample_data_100 <- rnorm(100, mean=1, sd=1)
+
+# combine the two samples to produce sample of 1000 observations
+combined_sample_1000 <- c(sample_data_900, sample_data_100)
+
+# saving in a variable for further analysis
+duplicates <- combined_sample_1000
+
+# store the indices of negative values
+neg_indices <- which(combined_sample_1000 < 0)
+
+# change half of the negative draws to be positive
+combined_sample_1000[neg_indices[1:(length(neg_indices)/2)]] <- abs(combined_sample_1000[neg_indices[1:(length(neg_indices)/2)]])
+
+# saving in a variable for further analysis
+half_neg_to_pos <- combined_sample_1000
+
+# check the number of negative values left in the dataset
+new_neg_indices <- which(combined_sample_1000<0)
+
+# store the indices of observations >= 1 & <= 1.1
+selected_indices <- which(combined_sample_1000 >= 1 & combined_sample_1000 <= 1.1)
+
+# divide the values between 1 and 1.1 in the dataset by 10
+combined_sample_1000[selected_indices] <- combined_sample_1000[selected_indices]/10
+
+# saving in a variable for further analysis
+div_by_10 <- combined_sample_1000
+
+# check the number of values between 1 and 1.1 left in the dataset
+new_selected_indices <- which(combined_sample_1000 >= 1 & combined_sample_1000 <= 1.1)
+
+```
+
+## Investigating whether the mean of the true data generating process is greater than 0
+
+To investigate whether the mean of the true data generating process is greater than 0, we will use the one-sample t-test.
+
+We can use the one-sample t-test because we have a large sample size of 1000 observations. Furthermore, a visual inspection of the histogram plot of the sample data shows a bell-shape curve. This suggests normality. See the histogram plot below.
+
+```{r}
+#| echo: false
+hist(combined_sample_1000, main= "Histogram of dataset", xlab="Values", col="lightblue", border="black")
+```
+
+#### One-sample t-test
+
+Null hypothesis: true mean \<= 0
+
+Alternative hypothesis: true mean \> 0
+
+Below is the test result.
+
+```{r}
+#| echo: false
+t.test(combined_sample_1000, mu=0, alternative = "greater")
+```
+
+It can be observed that the p-value is less than our chosen significance level (0.05), the test statistic is positive and the confidence interval for the mean does not include 0. These observations give sufficient evidence to suggest that the true mean of the data generating process is greater than 0.
+
+## Issues brought about by the data transformations
+
+In order to investigate the impact of the data transformations, we will compute summary statistics (median, mean, and standard deviation) of the relevant datasets before and after each transformation to assess the impact of the data transformations.
+
+We will then proceed to plot a histogram of each of the datasets to determine whether a visual inspection of the plots would have been useful in flagging the unintended data transformations.
+
+Below is a description of each of the datasets whose summary statistics will be computed.
+
+#### Datasets
+
+**original** - 1000 observations drawn from the normal distribution with a mean of 1 and standard deviation of 1.
+
+```{r}
+#| echo: false
+
+# same seed used
+set.seed(111)
+original <- rnorm(1000, 1,1)
+```
+
+**duplicates** - a derivative of the `original` dataset above. However, the last 100 values have been replaced with the first 100 values.
+
+**half_neg_to_pos** - a derivative of the `duplicates` dataset above. However, half the negative values were then converted into positive values.
+
+**div_by_10** - a derivative of the `half_neg_to_pos` dataset above. However all values between 1 and 1.1 were divided by 10.
+
+#### Summary statistics
+
+Below are the generated summary statistics.
+
+```{r}
+#| echo: false
+
+# create a dataframe to store the 4 datasets
+df<-data.frame(Original=original, Duplicates=duplicates, Half_neg_to_pos=half_neg_to_pos, Div_by_10=div_by_10)
+
+# generate the summary statistics
+summary_stats <- data.frame(Median=apply(df,2,median),
+                           Mean=apply(df,2,mean),
+                           SD=apply(df,2,sd))
+
+summary_stats
+```
+
+It can be observed that each transformation of the dataset had an impact on the mean, median and standard deviation. As a result of this, it is recommended to compute and monitor the dataset summary statistics as part of the data analysis process.
+
+#### Visual Inspection of Plots
+
+Below are the histograms of the 4 datasets. The impact of the unintended data transformations are visible in the plots.
+
+```{r}
+#| echo: false
+
+par(mfrow=c(2,2))
+for (col in colnames(df)){
+  hist(df[[col]],main=col, xlab="Values", col="lightblue", border="black")
+}
+
+par(mfrow=c(1,1))
+```
+
+Let us review the plots one by one. When we compare `duplicates` against `original`, there is not much of a difference in the plots so we are not able to flag the impact of duplicating the first 100 observations in the dataset.
+
+However, comparing `Half_neg_to_pos` histogram against `Duplicates` and `Original` histograms we note that the frequency of values less than 0 has decreased. This should prompt us to investigate what happened. When we check the data, we note that initially, there were `r length(which(duplicates<0))` negative values in the `duplicates` dataset however only `r length(which(half_neg_to_pos<0))` negative values remained in the `half_neg_to_pos` dataset.
+
+When we compare the `Div_by_10` histogram to the other histograms, we notice that the frequency of values between 0 and 1.5 has changed. For example, in the `Half_neg_to_pos` histogram, the frequency of values between 0 and 1.5 seems to be increasing at each step however in the `Div_by_10` histogram, the frequency is decreasing. This should prompt an investigation to find out what happened.
+
+Therefore, it is recommended to plot and visually examine data plots as part of the data analysis process to flag any errors that might arise..
