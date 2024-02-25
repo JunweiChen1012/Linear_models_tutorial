@@ -1,7 +1,7 @@
 ---
 title: "IMPACT OF ERRONEOUS DATA TRANSFORMATIONS ON ANALYSIS"
 author: "Junwei Chen"
-format: html
+format: pdf
 editor: visual
 date: 24 February 2024
 ---
@@ -69,7 +69,7 @@ We can use the one-sample t-test because we have a large sample size of 1000 obs
 
 ```{r}
 #| echo: false
-hist(combined_sample_1000, main= "Histogram of dataset", xlab="Values", col="lightblue", border="black")
+hist(combined_sample_1000, main= "Histogram of the dataset", xlab="Values", col="lightblue", border="black")
 ```
 
 #### One-sample t-test
