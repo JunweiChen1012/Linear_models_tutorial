@@ -9,7 +9,7 @@
 <meta name="author" content="Junwei Chen">
 <meta name="dcterms.date" content="2024-02-24">
 
-<title>IMPACT OF UNPLANNED DATA TRANSFORMATIONS ON ANALYSIS</title>
+<title>IMPACT OF ERRONEOUS DATA TRANSFORMATIONS ON ANALYSIS</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">IMPACT OF UNPLANNED DATA TRANSFORMATIONS ON ANALYSIS</h1>
+<h1 class="title">IMPACT OF ERRONEOUS DATA TRANSFORMATIONS ON ANALYSIS</h1>
 </div>
 
 
@@ -76,8 +76,8 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>In this exercise we will generate some data from the normal distribution with mean 1 and standard deviation 1. We then transform the data as outlined in the <strong>Data Simulation</strong> section and proceed to investigate whether the mean of the true data generating process is greater than 0. We will then discuss some of the issues brought about by the data transformations and what steps we can put in place to flag some of these issues during data analysis.</p>
-<p>All the code for for this exercise can be accessed [here](https://www.github.com).</p>
+<p>In this exercise we will generate some data from the normal distribution with mean 1 and standard deviation 1. We then transform the data as outlined in the <strong>Data Simulation</strong> section and proceed to investigate whether the mean of the true data generating process is greater than 0. We will then discuss some of the issues brought about by the data transformations and what steps we can put in place to flag some these issues during data analysis.</p>
+<p>All the code for this exercise can be accessed [here](<a href="https://github.com/JunweiChen1012/Linear_models_tutorial" class="uri">https://github.com/JunweiChen1012/Linear_models_tutorial</a>).</p>
 </section>
 <section id="data-simulation" class="level2">
 <h2 class="anchored" data-anchor-id="data-simulation">Data Simulation</h2>
@@ -152,7 +152,7 @@ Div_by_10       0.9777297 1.0590530 0.9095233</code></pre>
 <p>Let us review the plots one by one. When we compare <code>duplicates</code> against <code>original</code>, there is not much of a difference in the plots so we are not able to flag the impact of duplicating the first 100 observations in the dataset.</p>
 <p>However, comparing <code>Half_neg_to_pos</code> histogram against <code>Duplicates</code> and <code>Original</code> histograms we note that the frequency of values less than 0 has decreased. This should prompt us to investigate what happened. When we check the data, we note that initially, there were 153 negative values in the <code>duplicates</code> dataset however only 77 negative values remained in the <code>half_neg_to_pos</code> dataset.</p>
 <p>When we compare the <code>Div_by_10</code> histogram to the other histograms, we notice that the frequency of values between 0 and 1.5 has changed. For example, in the <code>Half_neg_to_pos</code> histogram, the frequency of values between 0 and 1.5 seems to be increasing at each step however in the <code>Div_by_10</code> histogram, the frequency is decreasing. This should prompt an investigation to find out what happened.</p>
-<p>Therefore, it is recommended to plot and visually examine data plots as part of the data analysis process to flag any errors that might arise..</p>
+<p>Therefore, it is recommended to plot and visually examine data plots as part of the data analysis process to flag any errors that might arise.</p>
 </section>
 </section>
 

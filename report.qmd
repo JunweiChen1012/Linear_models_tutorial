@@ -1,5 +1,5 @@
 ---
-title: "IMPACT OF UNPLANNED DATA TRANSFORMATIONS ON ANALYSIS"
+title: "IMPACT OF ERRONEOUS DATA TRANSFORMATIONS ON ANALYSIS"
 author: "Junwei Chen"
 format: html
 editor: visual
@@ -8,13 +8,13 @@ date: 24 February 2024
 
 ## Introduction
 
-In this exercise we will generate some data from the normal distribution with mean 1 and standard deviation 1. We then transform the data as outlined in the **Data Simulation** section and proceed to investigate whether the mean of the true data generating process is greater than 0. We will then discuss some of the issues brought about by the data transformations and what steps we can put in place to flag some of these issues during data analysis.
+In this exercise we will generate some data from the normal distribution with mean 1 and standard deviation 1. We then transform the data as outlined in the **Data Simulation** section and proceed to investigate whether the mean of the true data generating process is greater than 0. We will then discuss some of the issues brought about by the data transformations and what steps we can put in place to flag some these issues during data analysis.
 
-All the code for for this exercise can be accessed \[here\](https://www.github.com).
+All the code for this exercise can be accessed at this link <https://github.com/JunweiChen1012/Linear_models_tutorial>.
 
 ## Data Simulation
 
-We draw 1000 observations of data from the normal distribution of mean 1 and standard deviation 1. The last 100 observations are similar to the first 100 observations. We then change half of the negative draws to positive. Finally, we divide all observations with values between 1 and 1.1 by 10. The code that generates the observations can be accessed \[**here**\](https://www.github.com).
+We draw 1000 observations of data from the normal distribution of mean 1 and standard deviation 1. The last 100 observations are similar to the first 100 observations. We then change half of the negative draws to positive. Finally, we divide all observations with values between 1 and 1.1 by 10. The code that generates the observations can be accessed at the link provided above.
 
 ```{r}
 #| echo: false
@@ -154,4 +154,4 @@ However, comparing `Half_neg_to_pos` histogram against `Duplicates` and `Origina
 
 When we compare the `Div_by_10` histogram to the other histograms, we notice that the frequency of values between 0 and 1.5 has changed. For example, in the `Half_neg_to_pos` histogram, the frequency of values between 0 and 1.5 seems to be increasing at each step however in the `Div_by_10` histogram, the frequency is decreasing. This should prompt an investigation to find out what happened.
 
-Therefore, it is recommended to plot and visually examine data plots as part of the data analysis process to flag any errors that might arise..
+Therefore, it is recommended to plot and visually examine data plots as part of the data analysis process to flag any errors that might arise.
